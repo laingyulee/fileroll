@@ -4,6 +4,8 @@ English · [中文](docs/README.zh.md) · [日本語](docs/README.ja.md) · [Esp
 
 FileRoll is a personal cloud storage application with WebDAV support, offering file management, version control, sharing, multi-user management, and more. Built with PHP 8+ and SQLite/MySQL, it can be accessed via a browser or any WebDAV client.
 
+![Preview](docs/preview.png)
+
 ## Features
 
 - **File & Folder Management**: drag-and-drop upload, move, copy, rename, trash, starred items

@@ -4,6 +4,8 @@
 
 FileRoll es una aplicación de almacenamiento en la nube personal con soporte WebDAV que ofrece gestión de archivos, control de versiones, compartición, gestión multiusuario y más. Construida con PHP 8+ y SQLite/MySQL, se puede acceder mediante un navegador o cualquier cliente WebDAV.
 
+![Preview](preview.png)
+
 ## Características
 
 - **Gestión de archivos y carpetas**: subida arrastrar y soltar, mover, copiar, renombrar, papelera, favoritos
