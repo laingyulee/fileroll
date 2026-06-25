@@ -1,0 +1,17 @@
+RewriteEngine On
+
+# Do not rewrite requests already in public/ or install/
+RewriteRule ^public/ - [L]
+RewriteRule ^install/ - [L]
+
+# Everything else goes to public/ (works at root and subdirectory)
+RewriteRule ^(.*)$ public/$1 [L,QSA]
+
+# Deny access to sensitive files
+<Files "config.php">
+    Require all denied
+</Files>
+
+<FilesMatch "\.(sql|log|db|md)$">
+    Require all denied
+</FilesMatch>

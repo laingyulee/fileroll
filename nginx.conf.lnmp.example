@@ -1,0 +1,134 @@
+# ============================================================
+# FileRoll Nginx Configuration
+# ── LNMP 一键包 / open_basedir 受限环境专用 ──
+# 适用场景：LNMP 一键包、部分面板（open_basedir 自动跟随 root）
+# 特点：root 指向项目根目录，PHP 可访问上级目录，
+#       用 deny 规则屏蔽敏感目录弥补安全性
+# ============================================================
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name fileroll.yourdomain.com;
+    index index.html index.htm index.php default.html default.htm default.php;
+    root /home/wwwroot/fileroll.yourdomain.com;           # ← 指向项目根目录
+
+    # ── SSL ──
+    ssl_certificate /usr/local/nginx/conf/ssl/fileroll.yourdomain.com/fullchain.cer;
+    ssl_certificate_key /usr/local/nginx/conf/ssl/fileroll.yourdomain.com/fileroll.yourdomain.com.key;
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
+    ssl_session_cache builtin:1000 shared:SSL:10m;
+    ssl_dhparam /usr/local/nginx/conf/ssl/dhparam.pem;
+
+    client_max_body_size 5G;
+
+    # ── Security headers ──
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+
+    # ════════════════════════════════════════════════════════
+    # 安全：屏蔽敏感目录和文件（root = 项目根目录时必须）
+    # ════════════════════════════════════════════════════════
+
+    # ── 源代码 / 配置 / 依赖 / 存储 / 模板 ──
+    location ~ ^/(src|config|storage|vendor|templates|tests|scripts|lang) {
+        deny all;
+        return 404;
+    }
+
+    # ── 安装目录：安装完成后 .installed 文件存在即自动屏蔽 ──
+    location ~ ^/install {
+        if (-f $document_root/install/.installed) {
+            return 404;
+        }
+        try_files $uri /install/index.php?$query_string;
+    }
+
+    # ── 构建文件 / 文档 / 隐藏文件（根目录级别） ──
+    location ~ ^/(composer\.(json|lock|phar)|nginx\.conf(\.lnmp)?\.example|phpunit\.xml|README\.md|\.gitignore|\.htaccess)$ {
+        deny all;
+        return 404;
+    }
+
+    # ── 点文件（.git/ .env 等） ──
+    location ~ /\. {
+        deny all;
+    }
+
+    location ~ /.well-known {
+        allow all;
+    }
+
+    # ════════════════════════════════════════════════════════
+    # 路由
+    # ════════════════════════════════════════════════════════
+
+    # ── Front controller：所有动态请求交给 public/index.php ──
+    location / {
+        try_files $uri /public/index.php?$query_string;
+    }
+
+    # ── PHP 文件（public/ 和 install/ 下的真实 PHP 文件） ──
+    location ~ ^/(public|install)/.+\.php$ {
+        fastcgi_pass unix:/tmp/php-cgi.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi.conf;
+        fastcgi_connect_timeout 300;
+        fastcgi_send_timeout 300;
+        fastcgi_read_timeout 300;
+    }
+
+    # ── 其他 .php（捕获从 try_files 内部重定向过来的请求） ──
+    location ~ \.php$ {
+        try_files $uri /public/index.php?$query_string;
+        fastcgi_pass unix:/tmp/php-cgi.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi.conf;
+        fastcgi_connect_timeout 300;
+        fastcgi_send_timeout 300;
+        fastcgi_read_timeout 300;
+    }
+
+    # ── WebDAV ──
+    location ~ ^/(dav|remote\.php/dav|remote\.php/webdav) {
+        try_files $uri /public/index.php?$query_string;
+        limit_except GET HEAD POST PUT DELETE MKCOL COPY MOVE OPTIONS PROPFIND PROPPATCH LOCK UNLOCK PATCH {
+            deny all;
+        }
+    }
+
+    # ════════════════════════════════════════════════════════
+    # 静态资源
+    # ════════════════════════════════════════════════════════
+
+    # ── assets（在 public/ 下，通过 alias 映射） ──
+    location ~ ^/assets/.*\.(css|js|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot)$ {
+        alias /home/wwwroot/fileroll.yourdomain.com/public/$uri;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # ── 静态文件后缀（无论在哪，存在即缓存） ──
+    location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # ── Gzip ──
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript;
+
+    access_log /home/wwwroot/fileroll.yourdomain.com/logs/nginx.access.log;
+    error_log /home/wwwroot/fileroll.yourdomain.com/logs/nginx.error.log;
+}

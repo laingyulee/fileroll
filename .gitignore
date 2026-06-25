@@ -1,0 +1,57 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE/editor folders
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# PHP Composer
+/vendor/
+/composer.lock
+/composer.phar
+
+# Environment files
+.env
+.env.*
+
+# Runtime logs, databases and caches
+*.log
+*.sqlite
+*.db
+cache/
+logs/
+.playwright-mcp/
+docs/superpowers/
+
+# Testing and coverage results
+tests/
+.phpunit.result.cache
+phpunit.xml
+coverage/
+
+# Storage runtime data
+/storage/content/
+/storage/temp/
+/storage/trash/
+
+# Public assets build output
+/public/assets/node_modules/
+
+# Nginx / installation state
+/install/steps/
+
+# Config file with absolute paths and credentials
+/config/config.php
+
+# Installation marker
+
+# Wails desktop client build artifacts
+/clients/desktop/build/
+/clients/desktop/frontend/dist/
+/clients/desktop/*.syso
+
+/install/.installed

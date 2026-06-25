@@ -1,0 +1,13 @@
+# Security: Block access to install directory after installation.
+# The installer checks for .installed file internally, but this adds an extra
+# layer for Apache deployments.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If the .installed marker exists, deny all access to this directory.
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}/.installed -f
+    RewriteRule .* - [F]
+</IfModule>
+
+# For extra security, delete the entire install/ directory after installation.

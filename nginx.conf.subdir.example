@@ -1,0 +1,67 @@
+# ============================================================
+# FileRoll Nginx Configuration
+# ── 二级目录安装 ──
+# 适用：https://example.com/mycloud/ 下运行
+# 主站点和 FileRoll 共用同一个域名
+# ============================================================
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+    index index.php;
+
+    # ── SSL ──
+    ssl_certificate /path/to/ssl/fullchain.cer;
+    ssl_certificate_key /path/to/ssl/yourdomain.com.key;
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers "EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:!MD5";
+    ssl_session_cache builtin:1000 shared:SSL:10m;
+    ssl_dhparam /usr/local/nginx/conf/ssl/dhparam.pem;
+
+    client_max_body_size 5G;
+
+    # ════════════════════════════════════════════════════════
+    # FileRoll subdirectory (/mycloud/)
+    # ════════════════════════════════════════════════════════
+
+    location ^~ /mycloud {
+        alias /path/to/fileroll/public;
+
+        # ── Front controller ──
+        location = /mycloud {
+            try_files /index.php?$query_string;
+        }
+
+        location /mycloud/ {
+            try_files $uri /mycloud/index.php?$query_string;
+        }
+
+        # ── PHP ──
+        location ~ /mycloud/\.php$ {
+            fastcgi_pass unix:/tmp/php-cgi.sock;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME /path/to/fileroll/public/index.php;
+            include fastcgi_params;
+            fastcgi_connect_timeout 300;
+            fastcgi_send_timeout 300;
+            fastcgi_read_timeout 300;
+        }
+
+        # ── WebDAV ──
+        location /mycloud/dav {
+            try_files $uri /mycloud/index.php?$query_string;
+            limit_except GET HEAD POST PUT DELETE MKCOL COPY MOVE OPTIONS PROPFIND PROPPATCH LOCK UNLOCK REPORT {
+                deny all;
+            }
+        }
+
+        # ── Static assets ──
+        location ~ /mycloud/.*\.(css|js|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot)$ {
+            expires 30d;
+            add_header Cache-Control "public, immutable";
+            access_log off;
+        }
+    }
+}

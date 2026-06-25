@@ -1,0 +1,81 @@
+# ============================================================
+# FileRoll Nginx Configuration
+# ── 根目录安装 ──
+# 适用：https://example.com/ 直接访问
+# root 指向 public/，项目文件完全不可见
+# ============================================================
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name fileroll.yourdomain.com;
+    index index.php;
+    root /home/wwwroot/fileroll.yourdomain.com/public;
+
+    # ── SSL ──
+    ssl_certificate /usr/local/nginx/conf/ssl/fileroll.yourdomain.com/fullchain.cer;
+    ssl_certificate_key /usr/local/nginx/conf/ssl/fileroll.yourdomain.com/fileroll.yourdomain.com.key;
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers "EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:!MD5";
+    ssl_session_cache builtin:1000 shared:SSL:10m;
+    ssl_dhparam /usr/local/nginx/conf/ssl/dhparam.pem;
+
+    # ── Security headers ──
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    client_max_body_size 5G;
+
+    # ── Front controller ──
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # ── PHP ──
+    location ~ \.php$ {
+        fastcgi_pass unix:/tmp/php-cgi.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_connect_timeout 300;
+        fastcgi_send_timeout 300;
+        fastcgi_read_timeout 300;
+    }
+
+    # ── WebDAV ──
+    location /dav {
+        try_files $uri /index.php?$query_string;
+        limit_except GET HEAD POST PUT DELETE MKCOL COPY MOVE OPTIONS PROPFIND PROPPATCH LOCK UNLOCK REPORT {
+            deny all;
+        }
+    }
+
+    # ── Deny hidden files ──
+    location ~ /\. {
+        deny all;
+    }
+
+    location ~ /.well-known {
+        allow all;
+    }
+
+    # ── Static assets ──
+    location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # ── Gzip ──
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript;
+
+    access_log /var/log/nginx/fileroll.yourdomain.com.log;
+    error_log /var/log/nginx/fileroll.yourdomain.com.error.log;
+}
