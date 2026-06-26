@@ -1,0 +1,37 @@
+services:
+  fileroll:
+    image: ghcr.io/${GITHUB_REPOSITORY:-fileroll/fileroll}:latest
+    # To build locally instead, comment the image line and uncomment below:
+    # build: .
+    ports:
+      - "${PORT:-80}:80"
+    volumes:
+      - fileroll_storage:/var/www/fileroll/storage
+      - fileroll_config:/var/www/fileroll/config
+    environment:
+      - APP_URL=${APP_URL:-/}
+      - DB_DRIVER=${DB_DRIVER:-sqlite}
+      # Uncomment for MySQL:
+      # - MYSQL_HOST=mysql
+      # - MYSQL_PORT=3306
+      # - MYSQL_DATABASE=fileroll
+      # - MYSQL_USERNAME=fileroll
+      # - MYSQL_PASSWORD=changeme
+    restart: unless-stopped
+
+  # Uncomment to use MySQL instead of SQLite:
+  # mysql:
+  #   image: mysql:8.0
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: rootpassword
+  #     MYSQL_DATABASE: fileroll
+  #     MYSQL_USER: fileroll
+  #     MYSQL_PASSWORD: changeme
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   restart: unless-stopped
+
+volumes:
+  fileroll_storage:
+  fileroll_config:
+  # mysql_data:
