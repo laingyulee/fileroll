@@ -5,28 +5,36 @@
 
 FROM php:8.4-fpm-alpine AS base
 
-# Install system dependencies
+# Install runtime dependencies
 RUN apk add --no-cache \
     nginx \
     supervisor \
     sqlite-libs \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    zip \
-    libzip-dev \
-    icu-dev \
-    oniguruma-dev
+    libpng \
+    libjpeg-turbo \
+    freetype \
+    libzip \
+    icu-libs
 
-# Install PHP extensions (pdo, mbstring, fileinfo, opcache are built-in since PHP 8.4)
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+# Install build dependencies, compile PHP extensions, then clean up
+RUN apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        libzip-dev \
+        icu-dev \
+        sqlite-dev \
+        mariadb-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_sqlite \
         pdo_mysql \
         gd \
         zip \
         intl \
-    && docker-php-ext-enable opcache
+    && docker-php-ext-enable opcache \
+    && apk del .build-deps
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
