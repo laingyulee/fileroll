@@ -22,7 +22,7 @@ Este documento contiene instrucciones completas de despliegue para FileRoll, cub
 
 ```bash
 cd /home/wwwroot
-git clone <url-del-repositorio> fileroll
+git clone https://github.com/laingyulee/fileroll.git fileroll
 # O subir mediante FTP/SFTP (asegúrate de subir el directorio completo)
 ```
 

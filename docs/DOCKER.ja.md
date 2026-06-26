@@ -1,5 +1,7 @@
 # FileRoll Docker デプロイガイド
 
+[English](./DOCKER.md) · [中文](./DOCKER.zh.md) · 日本語 · [Español](./DOCKER.es.md)
+
 事前構築済みの Docker イメージ `ghcr.io/laingyulee/fileroll` を使用して FileRoll をデプロイします。
 
 ## クイックスタート

@@ -55,7 +55,7 @@ docker run -d --name fileroll \
 #### 一分钟部署
 
 ```bash
-git clone <仓库地址> fileroll
+git clone https://github.com/laingyulee/fileroll.git fileroll
 cd fileroll
 composer install --no-dev
 mkdir -p storage/content storage/temp storage/trash

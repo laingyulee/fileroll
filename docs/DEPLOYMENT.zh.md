@@ -22,7 +22,7 @@
 
 ```bash
 cd /home/wwwroot
-git clone <仓库地址> fileroll
+git clone https://github.com/laingyulee/fileroll.git fileroll
 # 或通过 FTP/SFTP 上传（确保上传完整目录）
 ```
 

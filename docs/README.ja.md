@@ -55,7 +55,7 @@ Docker Compose、MySQL、リバースプロキシなどの詳細は [DOCKER.ja.m
 #### 1分間デプロイ
 
 ```bash
-git clone <リポジトリURL> fileroll
+git clone https://github.com/laingyulee/fileroll.git fileroll
 cd fileroll
 composer install --no-dev
 mkdir -p storage/content storage/temp storage/trash

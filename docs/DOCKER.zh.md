@@ -1,5 +1,7 @@
 # FileRoll Docker 部署指南
 
+[English](./DOCKER.md) · 中文 · [日本語](./DOCKER.ja.md) · [Español](./DOCKER.es.md)
+
 使用预构建的 Docker 镜像 `ghcr.io/laingyulee/fileroll` 快速部署 FileRoll。
 
 ## 快速开始

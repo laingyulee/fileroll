@@ -22,7 +22,7 @@
 
 ```bash
 cd /home/wwwroot
-git clone <リポジトリURL> fileroll
+git clone https://github.com/laingyulee/fileroll.git fileroll
 # または FTP/SFTP でアップロード（完全なディレクトリがアップロードされていることを確認）
 ```
 

@@ -1,5 +1,7 @@
 # Guía de despliegue con Docker de FileRoll
 
+[English](./DOCKER.md) · [中文](./DOCKER.zh.md) · [日本語](./DOCKER.ja.md) · Español
+
 Despliega FileRoll usando la imagen Docker preconstruida `ghcr.io/laingyulee/fileroll`.
 
 ## Inicio rápido

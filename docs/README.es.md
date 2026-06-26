@@ -55,7 +55,7 @@ Consulta [DOCKER.es.md](./DOCKER.es.md) para Docker Compose, MySQL, proxy invers
 #### Despliegue en un minuto
 
 ```bash
-git clone <url-del-repositorio> fileroll
+git clone https://github.com/laingyulee/fileroll.git fileroll
 cd fileroll
 composer install --no-dev
 mkdir -p storage/content storage/temp storage/trash
