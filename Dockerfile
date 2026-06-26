@@ -18,18 +18,15 @@ RUN apk add --no-cache \
     icu-dev \
     oniguruma-dev
 
-# Install PHP extensions
+# Install PHP extensions (pdo, mbstring, fileinfo, opcache are built-in since PHP 8.4)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
-        pdo \
         pdo_sqlite \
         pdo_mysql \
         gd \
-        mbstring \
         zip \
         intl \
-        fileinfo \
-        opcache
+    && docker-php-ext-enable opcache
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
