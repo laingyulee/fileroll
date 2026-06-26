@@ -52,7 +52,15 @@ class UploadDirectoryNode implements DAV\ICollection, DAV\IProperties
             mkdir($this->path, 0755, true);
         }
         $filePath = $this->path . '/' . $name;
-        file_put_contents($filePath, is_resource($data) ? stream_get_contents($data) : $data);
+        if (is_resource($data)) {
+            $out = fopen($filePath, 'wb');
+            if ($out !== false) {
+                stream_copy_to_stream($data, $out);
+                fclose($out);
+            }
+        } else {
+            file_put_contents($filePath, $data);
+        }
         return '"' . md5($name) . '"';
     }
 

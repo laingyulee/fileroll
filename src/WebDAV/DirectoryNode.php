@@ -54,7 +54,15 @@ class DirectoryNode implements DAV\ICollection, DAV\IProperties, DAV\INode
         $fileService = new \FileRoll\File\FileService($this->fileRepo, $versionRepo, $storage, $this->db, $this->config);
 
         $tempPath = $storage->getTempPath($name);
-        file_put_contents($tempPath, is_resource($data) ? stream_get_contents($data) : $data);
+        if (is_resource($data)) {
+            $out = fopen($tempPath, 'wb');
+            if ($out !== false) {
+                stream_copy_to_stream($data, $out);
+                fclose($out);
+            }
+        } else {
+            file_put_contents($tempPath, $data);
+        }
 
         $fileService->upload($this->userId, $this->fileId, $tempPath, $name);
 

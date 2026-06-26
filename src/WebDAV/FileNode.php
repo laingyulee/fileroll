@@ -58,10 +58,16 @@ class FileNode implements DAV\IFile, DAV\IProperties, DAV\INode
     public function put($data): string
     {
         $storage = new Storage($this->config);
-        $content = is_resource($data) ? stream_get_contents($data) : $data;
-
         $tempPath = $storage->getTempPath($this->file->name);
-        file_put_contents($tempPath, $content);
+        if (is_resource($data)) {
+            $out = fopen($tempPath, 'wb');
+            if ($out !== false) {
+                stream_copy_to_stream($data, $out);
+                fclose($out);
+            }
+        } else {
+            file_put_contents($tempPath, $data);
+        }
 
         $versionRepo = new \FileRoll\Version\VersionRepository($this->db);
         $fileService = new \FileRoll\File\FileService($this->fileRepo, $versionRepo, $storage, $this->db, $this->config);

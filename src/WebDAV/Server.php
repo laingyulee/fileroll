@@ -89,8 +89,13 @@ class Server
 
         $httpRequest->setHeader('Content-Type', $_SERVER['CONTENT_TYPE'] ?? '');
 
-        $body = file_get_contents('php://input');
-        $httpRequest->setBody($body);
+        // Use php://input stream instead of reading entire body into memory.
+        // This avoids memory exhaustion on large chunk uploads (e.g. 10MB+ per chunk).
+        // SabreDAV handles stream bodies correctly: small XML bodies (PROPFIND)
+        // are read via getBodyAsString(), while PUT file data is streamed via
+        // stream_copy_to_stream() in createFile()/put().
+        $bodyStream = fopen('php://input', 'rb');
+        $httpRequest->setBody($bodyStream !== false ? $bodyStream : '');
 
         return $httpRequest;
     }
