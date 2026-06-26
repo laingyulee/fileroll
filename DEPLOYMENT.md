@@ -16,6 +16,8 @@ This document contains complete deployment instructions for FileRoll, covering e
 
 ## Quick Deploy
 
+> **Want to skip the setup?** Deploy with Docker using a single command — see [DOCKER.md](docs/DOCKER.md) for details.
+
 ### 1. Get the Code
 
 ```bash

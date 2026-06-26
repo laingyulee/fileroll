@@ -1,12 +1,12 @@
-# FileRoll Docker Deployment Guide
+# Guía de despliegue con Docker de FileRoll
 
-Deploy FileRoll using the pre-built Docker image `ghcr.io/laingyulee/fileroll`.
+Despliega FileRoll usando la imagen Docker preconstruida `ghcr.io/laingyulee/fileroll`.
 
-## Quick Start
+## Inicio rápido
 
-### Using Docker Compose (Recommended)
+### Usando Docker Compose (Recomendado)
 
-1. Create a `docker-compose.yml`:
+1. Crea un archivo `docker-compose.yml`:
 
 ```yaml
 services:
@@ -26,15 +26,15 @@ volumes:
   fileroll_config:
 ```
 
-2. Start the service:
+2. Inicia el servicio:
 
 ```bash
 docker compose up -d
 ```
 
-3. Visit `https://yourdomain.com` and follow the installation wizard.
+3. Visita `https://yourdomain.com` y sigue el asistente de instalación.
 
-### Using Docker Run
+### Usando Docker Run
 
 ```bash
 docker run -d \
@@ -47,32 +47,32 @@ docker run -d \
   ghcr.io/laingyulee/fileroll:latest
 ```
 
-## Configuration
+## Configuración
 
-### Environment Variables
+### Variables de entorno
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `APP_URL` | Application URL (used to generate correct external links) | `/` |
-| `DB_DRIVER` | Database driver (`sqlite` / `mysql`) | `sqlite` |
-| `MYSQL_HOST` | MySQL host address | `127.0.0.1` |
-| `MYSQL_PORT` | MySQL port | `3306` |
-| `MYSQL_DATABASE` | MySQL database name | `fileroll` |
-| `MYSQL_USERNAME` | MySQL username | `root` |
-| `MYSQL_PASSWORD` | MySQL password | (empty) |
+| Variable | Descripción | Valor predeterminado |
+|----------|-------------|---------------------|
+| `APP_URL` | URL de la aplicación (usada para generar enlaces externos correctos) | `/` |
+| `DB_DRIVER` | Controlador de base de datos (`sqlite` / `mysql`) | `sqlite` |
+| `MYSQL_HOST` | Dirección del host MySQL | `127.0.0.1` |
+| `MYSQL_PORT` | Puerto MySQL | `3306` |
+| `MYSQL_DATABASE` | Nombre de la base de datos MySQL | `fileroll` |
+| `MYSQL_USERNAME` | Nombre de usuario MySQL | `root` |
+| `MYSQL_PASSWORD` | Contraseña MySQL | (vacío) |
 
-### Data Persistence
+### Persistencia de datos
 
-| Volume | Description |
+| Volume | Descripción |
 |--------|-------------|
-| `/var/www/fileroll/storage` | File storage, database (SQLite), temporary files |
-| `/var/www/fileroll/config` | Configuration file (`config.php`) |
+| `/var/www/fileroll/storage` | Almacenamiento de archivos, base de datos (SQLite), archivos temporales |
+| `/var/www/fileroll/config` | Archivo de configuración (`config.php`) |
 
-On first startup, if `config/config.php` does not exist, the entrypoint script will automatically copy it from `config.sample.php`.
+En el primer inicio, si `config/config.php` no existe, el script de entrada lo copiará automáticamente desde `config.sample.php`.
 
-### Using MySQL
+### Usar MySQL
 
-Modify `docker-compose.yml` to enable the MySQL service:
+Modifica `docker-compose.yml` para habilitar el servicio MySQL:
 
 ```yaml
 services:
@@ -112,22 +112,22 @@ volumes:
   mysql_data:
 ```
 
-Start the service:
+Inicia el servicio:
 
 ```bash
 docker compose up -d
 ```
 
-## Reverse Proxy & HTTPS
+## Proxy inverso y HTTPS
 
-In production, it is recommended to place a reverse proxy in front of Docker to handle SSL termination. Map the container port to a non-standard port (e.g. `8080`) and let the reverse proxy forward traffic:
+En producción, se recomienda colocar un proxy inverso delante de Docker para manejar la terminación SSL. Mapea el puerto del contenedor a un puerto no estándar (ej. `8080`) y deja que el proxy inverso reenvíe el tráfico:
 
 ```yaml
 ports:
-  - "127.0.0.1:8080:80"  # Listen on localhost only, forwarded by reverse proxy
+  - "127.0.0.1:8080:80"  # Escuchar solo en localhost, reenviado por el proxy inverso
 ```
 
-### Caddy Example
+### Ejemplo con Caddy
 
 ```Caddyfile
 fileroll.yourdomain.com {
@@ -135,9 +135,9 @@ fileroll.yourdomain.com {
 }
 ```
 
-Caddy will automatically provision and renew HTTPS certificates.
+Caddy aprovisionará y renovará automáticamente los certificados HTTPS.
 
-### Nginx Example
+### Ejemplo con Nginx
 
 ```nginx
 server {
@@ -161,7 +161,7 @@ server {
 }
 ```
 
-## CLI Management
+## Gestión por CLI
 
 ```bash
 docker exec -it fileroll php scripts/console.php migrate
@@ -171,65 +171,65 @@ docker exec -it fileroll php scripts/console.php storage-stats
 docker exec -it fileroll php scripts/console.php cleanup-sessions
 ```
 
-## Updating
+## Actualización
 
 ```bash
 docker compose pull
 docker compose up -d
 ```
 
-## Backup & Restore
+## Copia de seguridad y restauración
 
-### Backup
+### Copia de seguridad
 
 ```bash
 docker run --rm -v fileroll_config:/data -v $(pwd):/backup alpine tar czf /backup/fileroll_config.tar.gz -C /data .
 docker run --rm -v fileroll_storage:/data -v $(pwd):/backup alpine tar czf /backup/fileroll_storage.tar.gz -C /data .
 ```
 
-### Restore
+### Restauración
 
 ```bash
-# Restore configuration
+# Restaurar configuración
 docker run --rm -v fileroll_config:/data -v $(pwd):/backup alpine sh -c "cd /data && tar xzf /backup/fileroll_config.tar.gz"
 
-# Restore storage
+# Restaurar almacenamiento
 docker run --rm -v fileroll_storage:/data -v $(pwd):/backup alpine sh -c "cd /data && tar xzf /backup/fileroll_storage.tar.gz"
 ```
 
-## Image Architecture
+## Arquitectura de la imagen
 
-The image `ghcr.io/laingyulee/fileroll` is based on `php:8.4-fpm-alpine` and includes:
+La imagen `ghcr.io/laingyulee/fileroll` está basada en `php:8.4-fpm-alpine` e incluye:
 
-- **PHP-FPM 8.4** — Handles PHP requests
-- **Nginx** — Web server
-- **Supervisor** — Process manager, ensures PHP-FPM and Nginx run together
+- **PHP-FPM 8.4** — Maneja las solicitudes PHP
+- **Nginx** — Servidor web
+- **Supervisor** — Gestor de procesos, asegura que PHP-FPM y Nginx se ejecuten juntos
 
-Built automatically via GitHub Actions, supporting `linux/amd64` and `linux/arm64` architectures.
+Construida automáticamente mediante GitHub Actions, compatible con las arquitecturas `linux/amd64` y `linux/arm64`.
 
-## FAQ
+## Preguntas frecuentes
 
-### Large file upload fails
+### Falla la subida de archivos grandes
 
-The container is pre-configured with `memory_limit=256M`, `upload_max_filesize=5G`, `post_max_size=5G`. If using a reverse proxy, make sure the proxy layer also allows large file uploads (e.g. nginx's `client_max_body_size`).
+El contenedor viene preconfigurado con `memory_limit=256M`, `upload_max_filesize=5G`, `post_max_size=5G`. Si usas un proxy inverso, asegúrate de que la capa del proxy también permita la subida de archivos grandes (ej. `client_max_body_size` de nginx).
 
-### Permission issues
+### Problemas de permisos
 
-The entrypoint script automatically sets permissions for `storage/` and `config/`. If you encounter permission issues:
+El script de entrada establece automáticamente los permisos para `storage/` y `config/`. Si encuentras problemas de permisos:
 
 ```bash
 docker exec -it fileroll chown -R www-data:www-data storage/ config/
 ```
 
-### Viewing logs
+### Ver registros
 
 ```bash
 docker logs -f fileroll
 ```
 
-### Building from source
+### Construir desde el código fuente
 
-If you need to build the image yourself:
+Si necesitas construir la imagen tú mismo:
 
 ```bash
 git clone https://github.com/laingyulee/fileroll.git
@@ -237,7 +237,7 @@ cd fileroll
 docker build -t fileroll .
 ```
 
-Or replace `image` with `build` in `docker-compose.yml`:
+O reemplaza `image` con `build` en `docker-compose.yml`:
 
 ```yaml
 services:

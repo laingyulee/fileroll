@@ -25,7 +25,25 @@ FileRoll は WebDAV に対応した個人用クラウドストレージアプリ
 
 ## クイックスタート
 
-### 環境要件
+### Docker デプロイ（推奨）
+
+最も早い始め方 — PHP、Nginx、その他の依存関係をインストールする必要はありません：
+
+```bash
+docker run -d --name fileroll \
+  -p 80:80 \
+  -v fileroll_storage:/var/www/fileroll/storage \
+  -v fileroll_config:/var/www/fileroll/config \
+  -e APP_URL=https://yourdomain.com \
+  --restart unless-stopped \
+  ghcr.io/laingyulee/fileroll:latest
+```
+
+Docker Compose、MySQL、リバースプロキシなどの詳細は [DOCKER.ja.md](./DOCKER.ja.md) を参照してください。
+
+### 手動デプロイ
+
+#### 環境要件
 
 | 項目 | 要件 |
 |---|---|
@@ -34,7 +52,7 @@ FileRoll は WebDAV に対応した個人用クラウドストレージアプリ
 | Web サーバー | nginx または Apache (mod_rewrite) |
 | データベース | SQLite（デフォルト）または MySQL 5.7+ / MariaDB 10.3+ |
 
-### 1分間デプロイ
+#### 1分間デプロイ
 
 ```bash
 git clone <リポジトリURL> fileroll
@@ -46,7 +64,7 @@ chmod -R 775 storage/ config/
 
 次に、Web サーバーを `public/`（推奨）またはプロジェクトルート（LNMP 方式）に向けるよう設定し、ドメインにアクセスしてインストールウィザードを開始します。
 
-> **詳細なデプロイ手順**（nginx/Apache の完全な設定、LNMP ワンクリックパッケージ、権限、FAQ など）は [DEPLOYMENT.ja.md](./DEPLOYMENT.ja.md) を参照してください。
+> **詳細なデプロイ手順**（nginx/Apache の完全な設定、LNMP ワンクリックパッケージ、権限、FAQ など）は [DEPLOYMENT.ja.md](./DEPLOYMENT.ja.md) を参照してください。Docker デプロイは [DOCKER.ja.md](./DOCKER.ja.md) を参照してください。
 
 ### インストールウィザード
 
@@ -79,6 +97,7 @@ rm -rf install/
 ├── tests/               # PHPUnit テスト
 ├── scripts/console.php  # CLI 管理スクリプト
 └── DEPLOYMENT.md        # 詳細デプロイガイド
+└── docs/DOCKER.ja.md    # Docker デプロイガイド
 ```
 
 ## CLI 管理

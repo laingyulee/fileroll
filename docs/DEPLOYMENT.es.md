@@ -16,6 +16,8 @@ Este documento contiene instrucciones completas de despliegue para FileRoll, cub
 
 ## Despliegue rápido
 
+> **¿Quieres omitir la configuración?** Despliega con Docker en un solo comando — consulta [DOCKER.es.md](./DOCKER.es.md) para más detalles.
+
 ### 1. Obtener el código
 
 ```bash

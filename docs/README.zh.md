@@ -25,7 +25,25 @@ FileRoll 是一个支持 WebDAV 的个人云存储应用，提供文件管理、
 
 ## 快速开始
 
-### 环境要求
+### Docker 部署（推荐）
+
+最快的上手方式，无需安装 PHP、Nginx 或任何依赖：
+
+```bash
+docker run -d --name fileroll \
+  -p 80:80 \
+  -v fileroll_storage:/var/www/fileroll/storage \
+  -v fileroll_config:/var/www/fileroll/config \
+  -e APP_URL=https://yourdomain.com \
+  --restart unless-stopped \
+  ghcr.io/laingyulee/fileroll:latest
+```
+
+详见 [DOCKER.zh.md](./DOCKER.zh.md)，包含 Docker Compose、MySQL、反向代理等完整配置。
+
+### 手动部署
+
+#### 环境要求
 
 | 项目 | 要求 |
 |---|---|
@@ -34,7 +52,7 @@ FileRoll 是一个支持 WebDAV 的个人云存储应用，提供文件管理、
 | Web 服务器 | nginx 或 Apache (mod_rewrite) |
 | 数据库 | SQLite（默认）或 MySQL 5.7+ / MariaDB 10.3+ |
 
-### 一分钟部署
+#### 一分钟部署
 
 ```bash
 git clone <仓库地址> fileroll
@@ -46,7 +64,7 @@ chmod -R 775 storage/ config/
 
 然后配置 Web 服务器指向 `public/`（推荐）或项目根目录（LNMP 方案），访问域名进入安装向导。
 
-> **详细部署说明**（含 nginx/Apache 完整配置、LNMP 一键包、权限、FAQ）请参阅 [DEPLOYMENT.zh.md](./DEPLOYMENT.zh.md)。
+> **详细部署说明**（含 nginx/Apache 完整配置、LNMP 一键包、权限、FAQ）请参阅 [DEPLOYMENT.zh.md](./DEPLOYMENT.zh.md)。Docker 部署请参阅 [DOCKER.zh.md](./DOCKER.zh.md)。
 
 ### 安装向导
 
@@ -79,6 +97,7 @@ rm -rf install/
 ├── tests/               # PHPUnit 测试
 ├── scripts/console.php  # CLI 管理脚本
 └── DEPLOYMENT.md        # 详细部署指南
+└── docs/DOCKER.zh.md    # Docker 部署指南
 ```
 
 ## CLI 管理

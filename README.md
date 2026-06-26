@@ -4,8 +4,6 @@ English · [中文](docs/README.zh.md) · [日本語](docs/README.ja.md) · [Esp
 
 FileRoll is a personal cloud storage application with WebDAV support, offering file management, version control, sharing, multi-user management, and more. Built with PHP 8+ and SQLite/MySQL, it can be accessed via a browser or any WebDAV client.
 
-![Preview](docs/preview.png)
-
 ## Features
 
 - **File & Folder Management**: drag-and-drop upload, move, copy, rename, trash, starred items
@@ -27,7 +25,25 @@ FileRoll is a personal cloud storage application with WebDAV support, offering f
 
 ## Quick Start
 
-### Requirements
+### Docker Deploy (Recommended)
+
+The fastest way to get started — no need to install PHP, Nginx, or any dependencies:
+
+```bash
+docker run -d --name fileroll \
+  -p 80:80 \
+  -v fileroll_storage:/var/www/fileroll/storage \
+  -v fileroll_config:/var/www/fileroll/config \
+  -e APP_URL=https://yourdomain.com \
+  --restart unless-stopped \
+  ghcr.io/laingyulee/fileroll:latest
+```
+
+See [DOCKER.md](docs/DOCKER.md) for Docker Compose, MySQL, reverse proxy, and more.
+
+### Manual Deploy
+
+#### Requirements
 
 | Item | Requirement |
 |---|---|
@@ -36,7 +52,7 @@ FileRoll is a personal cloud storage application with WebDAV support, offering f
 | Web Server | nginx or Apache (mod_rewrite) |
 | Database | SQLite (default) or MySQL 5.7+ / MariaDB 10.3+ |
 
-### One-Minute Deploy
+#### One-Minute Deploy
 
 ```bash
 git clone <repo-url> fileroll
@@ -48,7 +64,7 @@ chmod -R 775 storage/ config/
 
 Then configure your web server to point to `public/` (recommended) or the project root (LNMP approach), and visit the domain to enter the installation wizard.
 
-> **Detailed deployment instructions** (including complete nginx/Apache configuration, LNMP one-click package, permissions, FAQ) can be found in [DEPLOYMENT.md](DEPLOYMENT.md).
+> **Detailed deployment instructions** (including complete nginx/Apache configuration, LNMP one-click package, permissions, FAQ) can be found in [DEPLOYMENT.md](DEPLOYMENT.md). For Docker deployment, see [DOCKER.md](docs/DOCKER.md).
 
 ### Installation Wizard
 
@@ -81,6 +97,7 @@ rm -rf install/
 ├── tests/               # PHPUnit tests
 ├── scripts/console.php  # CLI management script
 └── DEPLOYMENT.md        # Detailed deployment guide
+└── docs/DOCKER.md       # Docker deployment guide
 ```
 
 ## CLI Management

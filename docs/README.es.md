@@ -25,7 +25,25 @@ FileRoll es una aplicación de almacenamiento en la nube personal con soporte We
 
 ## Inicio rápido
 
-### Requisitos
+### Despliegue con Docker (Recomendado)
+
+La forma más rápida de comenzar — sin necesidad de instalar PHP, Nginx ni ninguna dependencia:
+
+```bash
+docker run -d --name fileroll \
+  -p 80:80 \
+  -v fileroll_storage:/var/www/fileroll/storage \
+  -v fileroll_config:/var/www/fileroll/config \
+  -e APP_URL=https://yourdomain.com \
+  --restart unless-stopped \
+  ghcr.io/laingyulee/fileroll:latest
+```
+
+Consulta [DOCKER.es.md](./DOCKER.es.md) para Docker Compose, MySQL, proxy inverso y más.
+
+### Despliegue manual
+
+#### Requisitos
 
 | Elemento | Requisito |
 |---|---|
@@ -34,7 +52,7 @@ FileRoll es una aplicación de almacenamiento en la nube personal con soporte We
 | Servidor web | nginx o Apache (mod_rewrite) |
 | Base de datos | SQLite (predeterminado) o MySQL 5.7+ / MariaDB 10.3+ |
 
-### Despliegue en un minuto
+#### Despliegue en un minuto
 
 ```bash
 git clone <url-del-repositorio> fileroll
@@ -46,7 +64,7 @@ chmod -R 775 storage/ config/
 
 Luego configura tu servidor web para que apunte a `public/` (recomendado) o a la raíz del proyecto (enfoque LNMP), y visita el dominio para entrar en el asistente de instalación.
 
-> **Instrucciones de despliegue detalladas** (incluyendo configuraciones completas de nginx/Apache, paquete LNMP, permisos, FAQ) están en [DEPLOYMENT.es.md](./DEPLOYMENT.es.md).
+> **Instrucciones de despliegue detalladas** (incluyendo configuraciones completas de nginx/Apache, paquete LNMP, permisos, FAQ) están en [DEPLOYMENT.es.md](./DEPLOYMENT.es.md). Para despliegue con Docker, consulta [DOCKER.es.md](./DOCKER.es.md).
 
 ### Asistente de instalación
 
@@ -79,6 +97,7 @@ rm -rf install/
 ├── tests/               # Tests de PHPUnit
 ├── scripts/console.php  # Script de gestión CLI
 └── DEPLOYMENT.md        # Guía de despliegue detallada
+└── docs/DOCKER.es.md    # Guía de despliegue con Docker
 ```
 
 ## Gestión mediante CLI

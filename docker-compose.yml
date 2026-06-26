@@ -1,6 +1,6 @@
 services:
   fileroll:
-    image: ghcr.io/${GITHUB_REPOSITORY:-fileroll/fileroll}:latest
+    image: ghcr.io/laingyulee/fileroll:latest
     # To build locally instead, comment the image line and uncomment below:
     # build: .
     ports:
