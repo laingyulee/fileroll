@@ -284,4 +284,7 @@ Modifica `client_max_body_size` en la configuración de nginx, así como la conf
 ; /usr/local/php/etc/php.ini
 upload_max_filesize = 5G
 post_max_size = 5G
+memory_limit = 256M
 ```
+
+> `memory_limit` afecta la cantidad de memoria que puede usar una sola petición PHP. Las subidas fragmentadas por WebDAV utilizan streaming para minimizar el consumo de memoria, pero se recomienda al menos 256M para soportar archivos grandes.

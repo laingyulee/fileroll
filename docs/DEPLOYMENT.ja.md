@@ -284,4 +284,7 @@ nginx 設定の `client_max_body_size` および PHP 設定を変更してくだ
 ; /usr/local/php/etc/php.ini
 upload_max_filesize = 5G
 post_max_size = 5G
+memory_limit = 256M
 ```
+
+> `memory_limit` は単一の PHP リクエストが使用できるメモリ量に影響します。WebDAV のチャンクアップロードはストリーミングを使用してメモリ消費を最小限に抑えていますが、大きなファイルのサポートには少なくとも 256M を推奨します。

@@ -284,4 +284,7 @@ PHP-FPM 连接失败。常见原因：
 ; /usr/local/php/etc/php.ini
 upload_max_filesize = 5G
 post_max_size = 5G
+memory_limit = 256M
 ```
+
+> `memory_limit` 影响单个 PHP 请求可使用的内存大小。WebDAV 分块上传已使用流式处理来最小化内存消耗，但建议至少设置为 256M 以支持大文件上传。

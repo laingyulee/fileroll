@@ -284,4 +284,7 @@ Modify `client_max_body_size` in nginx configuration, as well as PHP configurati
 ; /usr/local/php/etc/php.ini
 upload_max_filesize = 5G
 post_max_size = 5G
+memory_limit = 256M
 ```
+
+> `memory_limit` affects how much PHP memory a single request can use. WebDAV chunked uploads use streaming to minimize memory consumption, but at least 256M is recommended for large file support.
