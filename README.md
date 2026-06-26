@@ -55,7 +55,7 @@ See [DOCKER.md](docs/DOCKER.md) for Docker Compose, MySQL, reverse proxy, and mo
 #### One-Minute Deploy
 
 ```bash
-git clone <repo-url> fileroll
+git clone https://github.com/laingyulee/fileroll.git fileroll
 cd fileroll
 composer install --no-dev
 mkdir -p storage/content storage/temp storage/trash
